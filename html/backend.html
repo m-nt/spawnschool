@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دوره آموزش برنامه‌نویسی بک‌اند | Spawn School</title>
+  <meta name="description" content="دوره جامع برنامه‌نویسی بک‌اند با Node.js، PostgreSQL، Redis و Docker — از اولین سرور تا استقرار روی سرور واقعی. پروژه‌محور و آماده برای بازار کار.">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07110d;
+      --bg-card: #0e1a15;
+      --bg-card-hover: #15251d;
+      --primary: #10b981;
+      --primary-light: #34d399;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --teal: #2dd4bf;
+      --text-main: #ffffff;
+      --text-muted: #93a89e;
+      --gradient-1: linear-gradient(135deg, #047857 0%, #10b981 55%, #34d399 100%);
+      --gradient-2: linear-gradient(135deg, #f59e0b 0%, #2dd4bf 100%);
+      --gradient-glow: linear-gradient(135deg, #10b981, #2dd4bf, #fbbf24);
+      --glass: rgba(7, 17, 13, 0.8);
+      --border-glow: rgba(16, 185, 129, 0.4);
+      --grid-line: rgba(16, 185, 129, 0.07);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, system-ui, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* ===== Creative Backend Background: live server mesh ===== */
+    .bg-animation {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(16, 185, 129, 0.14) 0%, transparent 70%),
+        radial-gradient(ellipse 70% 50% at 50% 100%, rgba(245, 158, 11, 0.10) 0%, transparent 70%),
+        var(--bg-dark);
+    }
+
+    /* Animated node graph (servers + databases + clients) */
+    #mesh-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.75;
+    }
+
+    /* Perspective data grid */
+    .bg-grid {
+      position: absolute;
+      left: -50%;
+      bottom: -22%;
+      width: 200%;
+      height: 85%;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(520px) rotateX(62deg);
+      transform-origin: bottom center;
+      animation: gridScroll 10s linear infinite;
+      mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent 72%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent 72%);
+      opacity: 0.55;
+    }
+
+    @keyframes gridScroll {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 60px; }
+    }
+
+    /* Soft glowing blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(95px);
+      opacity: 0.22;
+      animation: blobDrift 22s ease-in-out infinite;
+    }
+
+    .blob-1 { width: 460px; height: 460px; background: #10b981; top: -10%; right: -8%; }
+    .blob-2 { width: 360px; height: 360px; background: #f59e0b; bottom: 2%; left: -9%; animation-delay: -8s; }
+    .blob-3 { width: 320px; height: 320px; background: #2dd4bf; top: 44%; left: 34%; animation-delay: -14s; }
+
+    @keyframes blobDrift {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      33% { transform: translate3d(40px, -40px, 0) scale(1.12); }
+      66% { transform: translate3d(-30px, 25px, 0) scale(0.94); }
+    }
+
+    /* Horizontal "API traffic" lanes with travelling packets */
+    .lane {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 4%,
+        rgba(52, 211, 153, 0.10) 18%,
+        rgba(52, 211, 153, 0.10) 82%,
+        transparent 96%);
+    }
+
+    .lane::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 38px;
+      height: 5px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.75));
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+      animation: laneRun var(--dur, 10s) linear infinite var(--del, 0s);
+    }
+
+    .lane-1 { top: 19%; --dur: 11s; --del: 0s; }
+    .lane-2 { top: 47%; --dur: 9s; --del: -3.5s; }
+    .lane-3 { bottom: 21%; --dur: 13s; --del: -6s; transform: scaleX(-1); }
+    .lane-3::after { background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.7)); box-shadow: 0 0 12px rgba(251, 191, 36, 0.45); }
+
+    @keyframes laneRun {
+      0% { transform: translateX(-5vw); opacity: 0; }
+      12% { opacity: 1; }
+      88% { opacity: 1; }
+      100% { transform: translateX(103vw); opacity: 0; }
+    }
+
+    /* Floating API request / response chips */
+    .api-chip {
+      position: absolute;
+      font-family: 'Courier New', monospace;
+      font-size: 0.74rem;
+      direction: ltr;
+      white-space: nowrap;
+      padding: 6px 12px;
+      border-radius: 8px;
+      color: rgba(52, 211, 153, 0.7);
+      background: rgba(5, 20, 15, 0.55);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+      backdrop-filter: blur(5px);
+      animation: chipFloat 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .api-chip.amber {
+      color: rgba(251, 191, 36, 0.72);
+      border-color: rgba(251, 191, 36, 0.22);
+      background: rgba(24, 17, 4, 0.45);
+    }
+
+    .chip-1 { top: 24%; left: 3%; animation-delay: 0s; }
+    .chip-2 { top: 16%; right: 3%; animation-delay: -4s; }
+    .chip-3 { bottom: 28%; left: 4%; animation-delay: -8s; }
+    .chip-4 { bottom: 18%; right: 4%; animation-delay: -11s; }
+    .chip-5 { top: 68%; right: 5%; animation-delay: -2s; }
+
+    @keyframes chipFloat {
+      0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.62; }
+      50% { transform: translate3d(0, -14px, 0); opacity: 0.95; }
+    }
+
+    /* Server rack silhouette with blinking LEDs */
+    .rack {
+      position: absolute;
+      top: 30%;
+      right: 2%;
+      width: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0.3;
+      animation: rackGlow 7s ease-in-out infinite;
+    }
+
+    .rack-unit {
+      height: 46px;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      border-radius: 9px;
+      background:
+        repeating-linear-gradient(180deg, transparent 0 9px, rgba(255, 255, 255, 0.04) 9px 11px),
+        linear-gradient(180deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.02));
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 7px;
+    }
+
+    .rack-led {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+      animation: ledBlink 1.6s steps(2, end) infinite;
+    }
+
+    .rack-led:nth-child(2) { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; animation-delay: -0.4s; }
+    .rack-led:nth-child(3) { animation-delay: -0.9s; }
+
+    @keyframes ledBlink { 50% { opacity: 0.15; } }
+    @keyframes rackGlow { 0%, 100% { opacity: 0.24; } 50% { opacity: 0.38; } }
+
+    /* Darkening vignette so text stays readable */
+    .bg-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 38%,
+        rgba(7, 17, 13, 0.86) 0%,
+        rgba(7, 17, 13, 0.58) 40%,
+        rgba(7, 17, 13, 0.2) 72%,
+        transparent 100%);
+      pointer-events: none;
+    }
+
+    /* ===== Header ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+    }
+
+    .logo span { color: var(--accent-glow); -webkit-text-fill-color: var(--accent-glow); }
+
+    nav ul {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    nav a:hover { color: var(--text-main); }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-glow);
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    .cta-button {
+      background: var(--gradient-1);
+      color: white;
+      padding: 0.75rem 1.75rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+    }
+
+    /* ===== Back Button ===== */
+    .back-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 9999px;
+      background: var(--gradient-1);
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-main);
+      font-size: 1.75rem;
+      cursor: pointer;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 1100px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--border-glow);
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-glow);
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent-glow);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-glow);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      line-height: 1.25;
+      animation: fadeInUp 0.8s ease 0.2s backwards;
+    }
+
+    .hero h1 span {
+      background: var(--gradient-glow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      animation: fadeInUp 0.8s ease 0.4s backwards;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.6s backwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-main);
+      border: 2px solid rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--primary-light);
+      transform: translateY(-5px);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.8s backwards;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: var(--gradient-glow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== Section Styles ===== */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-label {
+      display: inline-block;
+      color: var(--accent-glow);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    /* ===== Course Section ===== */
+    .course-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 24px;
+      overflow: hidden;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.18);
+      animation: fadeInUp 1s ease;
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-glow);
+      z-index: 3;
+    }
+
+    .course-image {
+      width: 100%;
+      height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 28% 18%, rgba(52, 211, 153, 0.22), transparent 60%),
+        radial-gradient(ellipse at 82% 92%, rgba(245, 158, 11, 0.16), transparent 60%),
+        linear-gradient(135deg, #04130f 0%, #06231a 60%, #0a1f17 100%);
+    }
+
+    .course-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(52, 211, 153, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(52, 211, 153, 0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.5), transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.5), transparent 85%);
+    }
+
+    .course-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, var(--bg-card) 0%, transparent 45%);
+      z-index: 1;
+    }
+
+    /* Terminal mock-up inside the course banner */
+    .term {
+      position: relative;
+      z-index: 2;
+      width: min(600px, 88%);
+      border: 1px solid rgba(52, 211, 153, 0.32);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #03100c;
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.6), 0 0 44px rgba(16, 185, 129, 0.18);
+      transform: rotate(-1.2deg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: rotate(-1.2deg) translateY(0); }
+      50% { transform: rotate(-1.2deg) translateY(-8px); }
+    }
+
+    .term-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 14px;
+      direction: ltr;
+      background: rgba(16, 185, 129, 0.09);
+      border-bottom: 1px solid rgba(52, 211, 153, 0.18);
+    }
+
+    .term-bar i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .term-bar i:nth-child(1) { background: #ef4444; }
+    .term-bar i:nth-child(2) { background: #fbbf24; }
+    .term-bar i:nth-child(3) { background: #34d399; }
+
+    .term-bar span {
+      margin-left: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      color: #5eead4;
+      opacity: 0.7;
+    }
+
+    .term-body {
+      direction: ltr;
+      text-align: left;
+      padding: 15px 18px 18px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.95;
+      color: #a7f3d0;
+      white-space: nowrap;
+    }
+
+    .term-body .p { color: #fbbf24; }
+    .term-body .ok { color: #34d399; }
+    .term-body .num { color: #67e8f9; }
+    .term-body .dim { color: #5b8a7b; }
+    .term-body .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 13px;
+      background: #34d399;
+      vertical-align: middle;
+      animation: blink 1s steps(1, end) infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .course-content {
+      padding: 3rem;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item span { color: var(--accent-glow); }
+
+    .course-description {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .course-description strong { color: var(--text-main); }
+
+    .course-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .highlight-item:hover {
+      background: rgba(16, 185, 129, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .highlight-icon {
+      font-size: 1.5rem;
+    }
+
+    .highlight-text {
+      font-weight: 600;
+    }
+
+    .course-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(16, 185, 129, 0.2);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .price-tag {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .current-price {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-glow);
+    }
+
+    .old-price {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    /* ===== Instructor Section ===== */
+    .instructor-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2.5rem;
+      align-items: center;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.18);
+      animation: fadeInUp 1s ease 0.2s backwards;
+    }
+
+    .instructor-avatar {
+      width: 250px;
+      height: 250px;
+      border-radius: 20px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instructor-avatar::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border: 2px solid var(--border-glow);
+      border-radius: 20px;
+    }
+
+    .instructor-info h3 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .instructor-title {
+      color: var(--accent-glow);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .instructor-bio {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: justify;
+    }
+
+    .instructor-stats {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .inst-stat {
+      text-align: center;
+    }
+
+    .inst-stat-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .inst-stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .instructor-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 60px rgba(16, 185, 129, 0.3);
+    }
+
+    /* ===== Curriculum Section ===== */
+    .curriculum-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .module-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .module-item:hover {
+      border-color: var(--primary-light);
+      transform: translateX(-5px);
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+    }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .module-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      flex: none;
+    }
+
+    .module-title {
+      flex: 1;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-right: 1rem;
+    }
+
+    .module-lessons {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .module-toggle {
+      font-size: 1.5rem;
+      color: var(--accent-glow);
+      transition: transform 0.3s ease;
+      margin-right: 1rem;
+    }
+
+    .module-item.active .module-toggle {
+      transform: rotate(180deg);
+    }
+
+    .module-lessons-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .module-item.active .module-lessons-list {
+      max-height: 1200px;
+    }
+
+    .lesson-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(16, 185, 129, 0.1);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .lesson-item:hover {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--text-main);
+      padding-right: 1.75rem;
+    }
+
+    .play-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex: none;
+    }
+
+    .lesson-duration {
+      margin-right: auto;
+      font-size: 0.85rem;
+    }
+
+    /* ===== CTA Section ===== */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(245, 158, 11, 0.16) 100%);
+      border-radius: 32px;
+      padding: 4rem 2rem;
+      text-align: center;
+      border: 1px solid var(--border-glow);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, transparent 70%);
+      animation: rotateBg 20s linear infinite;
+    }
+
+    @keyframes rotateBg {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-content h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1rem;
+    }
+
+    .cta-content p {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: var(--bg-card);
+      border-top: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .footer-logo span { -webkit-text-fill-color: var(--accent-glow); }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: var(--accent-glow); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+      .api-chip, .rack { display: none; }
+      .lane { opacity: 0.6; }
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+
+      /* دکمه بازگشت در موبایل فقط آیکون می‌شود تا هدر شلوغ نشود */
+      .back-btn { padding: 0.55rem; }
+      .back-btn .back-text { display: none; }
+
+      nav ul {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--bg-card);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+        border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+      }
+
+      nav ul.active { transform: translateY(0); }
+
+      .instructor-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .instructor-avatar {
+        margin: 0 auto;
+        width: 180px;
+        height: 180px;
+        font-size: 3.5rem;
+      }
+
+      .instructor-stats {
+        justify-content: center;
+      }
+
+      .course-content { padding: 2rem; }
+      .course-image { height: 260px; }
+      .term-body { font-size: 0.62rem; padding: 12px 14px 14px; }
+      .term-bar span { display: none; }
+      .module-header { flex-wrap: wrap; gap: 0.75rem; }
+      .module-title { margin-right: 0; }
+      .module-toggle { margin-right: auto; }
+      .section-header { margin-bottom: 3rem; }
+      .lesson-item { gap: 0.65rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blob, .lane::after, .api-chip, .rack, .rack-led, .bg-grid,
+      .term, .cursor, .cta-section::before { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background: live server mesh -->
+  <div class="bg-animation" aria-hidden="true">
+    <canvas id="mesh-canvas"></canvas>
+    <div class="bg-grid"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="lane lane-1"></div>
+    <div class="lane lane-2"></div>
+    <div class="lane lane-3"></div>
+    <span class="api-chip chip-1">GET /api/v1/courses · 200 OK</span>
+    <span class="api-chip amber chip-2">POST /auth/login · 201</span>
+    <span class="api-chip chip-3">SELECT * FROM users;</span>
+    <span class="api-chip amber chip-4">docker compose up -d</span>
+    <span class="api-chip chip-5">● uptime 99.98%</span>
+    <div class="rack" aria-hidden="true">
+      <div class="rack-unit"><i class="rack-led"></i><i class="rack-led"></i><i class="rack-led"></i></div>
+      <div class="rack-unit"><i class="rack-led"></i><i class="rack-led"></i><i class="rack-led"></i></div>
+      <div class="rack-unit"><i class="rack-led"></i><i class="rack-led"></i><i class="rack-led"></i></div>
+      <div class="rack-unit"><i class="rack-led"></i><i class="rack-led"></i><i class="rack-led"></i></div>
+    </div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <div class="back-wrapper">
+        <a href="index.html" class="back-btn" aria-label="بازگشت به صفحه اصلی" title="بازگشت به صفحه اصلی">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span class="back-text">بازگشت به صفحه اصلی</span>
+        </a>
+      </div>
+      <div class="logo">Spawn<span>School</span></div>
+      <button class="menu-toggle" onclick="toggleMenu()" aria-label="باز کردن منو">☰</button>
+      <nav>
+        <ul id="nav-menu">
+          <li><a href="#course">دوره</a></li>
+          <li><a href="#instructor">استاد</a></li>
+          <li><a href="#curriculum">سرفصل‌ها</a></li>
+          <li><a href="index.html#contact" class="cta-button">ثبت‌نام</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">⚙️ آموزشگاه Spawn School</div>
+      <h1>برنامه‌نویسی <span>بک‌اند</span> رو از صفر تا استخدام یاد بگیر!</h1>
+      <p>
+        سرور، دیتابیس و API — همه‌چیزی که برای ساختن ستون فقرات هر اپلیکیشن لازم داری.
+        پروژه‌محور، عملی و دقیقاً مطابق نیاز بازار کار!
+      </p>
+      <div class="hero-buttons">
+        <a href="#course" class="btn btn-primary">🖥️ مشاهده دوره</a>
+        <a href="#curriculum" class="btn btn-secondary">📚 سرفصل‌ها</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">+۶۰</div>
+          <div class="stat-label">درس و پروژه</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۸</div>
+          <div class="stat-label">سرفصل اصلی</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۳+</div>
+          <div class="stat-label">پروژه واقعی</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۱۰۰٪</div>
+          <div class="stat-label">عملی</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Course Introduction Section -->
+  <section id="course">
+    <div class="section-header">
+      <div class="section-label">دوره جامع</div>
+      <h2 class="section-title">آموزش برنامه‌نویسی بک‌اند با Node.js</h2>
+      <p class="section-subtitle">
+        کامل‌ترین دوره بک‌اند در ایران — از اولین سرور تا استقرار روی سرور واقعی
+      </p>
+    </div>
+
+    <div class="course-card">
+      <div class="course-image">
+        <div class="course-image-overlay"></div>
+        <div class="term">
+          <div class="term-bar">
+            <i></i><i></i><i></i>
+            <span>backend — bash</span>
+          </div>
+          <div class="term-body">
+            <div><span class="p">$</span> npm init -y</div>
+            <div><span class="p">$</span> npm i express prisma pg dotenv</div>
+            <div><span class="ok">✔</span> server listening on port <span class="num">3000</span></div>
+            <div><span class="p">$</span> docker compose up -d</div>
+            <div><span class="ok">✔</span> api live → <span class="dim">api.spawn.academy</span> <span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="course-content">
+        <div class="course-meta">
+          <div class="meta-item">
+            <span>⏱</span> مدت دوره: <strong>۴ ماه</strong>
+          </div>
+          <div class="meta-item">
+            <span>📹</span> تعداد جلسات: <strong>۶۴ ساعت</strong>
+          </div>
+          <div class="meta-item">
+            <span>🏆</span> سطح: <strong>مقدماتی تا پیشرفته</strong>
+          </div>
+        </div>
+
+        <p class="course-description">
+          در دوره آموزش مقدماتی بک‌اند با زبان Go (Golang)، قدم‌به‌قدم با مفاهیم اصلی توسعه بک‌اند آشنا می‌شوید؛ از مبانی برنامه‌نویسی و ساخت اولین برنامه Go تا طراحی API، کار با پایگاه داده و تست و امنیت پایه.
+          هدف دوره این است که در کنار یادگیری مفاهیم، با انجام تمرین‌ها و ساخت یک پروژه عملی، درک درستی از نحوه کار بک‌اند و اجزای اصلی آن به دست بیاورید.
+        </p>
+        <p class="course-description">
+          با روش تدریس پروژه‌محور ما، همزمان با یادگیری تئوری، دست به کد می‌شی و ۳ پروژه واقعی رو از صفر تا
+          استقرار روی سرور پیش می‌بری. دیگه نگران مفاهیم خشک و انتزاعی نباش — اینجا همه‌چیز عملی و کاربردیه!
+        </p>
+
+        <div class="course-highlights">
+          <div class="highlight-item">
+            <span class="highlight-icon">💚</span>
+            <span class="highlight-text">Node.js و جاوااسکریپت مدرن</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🗄️</span>
+            <span class="highlight-text">پایگاه داده SQL و NoSQL</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🔌</span>
+            <span class="highlight-text">طراحی REST API و GraphQL</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🔐</span>
+            <span class="highlight-text">احراز هویت و امنیت</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🐳</span>
+            <span class="highlight-text">Docker و استقرار حرفه‌ای</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🤝</span>
+            <span class="highlight-text">پشتیبانی تا جذب کاری</span>
+          </div>
+        </div>
+
+        <div class="course-price-row">
+          <div class="price-tag">
+            <span class="current-price">۱۳,۹۹۹,۰۰۰ تومان</span>
+            <span class="old-price">۲۰,۰۰۰,۰۰۰ تومان</span>
+          </div>
+          <a href="index.html#contact" class="btn btn-primary">همین حالا ثبت‌نام کن</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Instructor Section -->
+  <section id="instructor">
+    <div class="section-header">
+      <div class="section-label">استاد دوره</div>
+      <h2 class="section-title">با مربی دوره آشنا بشید</h2>
+    </div>
+
+    <div class="instructor-card">
+      <div class="instructor-avatar">👨‍💻</div>
+      <div class="instructor-info">
+        <h3>محمد نصرتیان</h3>
+        <div class="instructor-title">مدرس دوره برنامه‌نویسی بک‌اند</div>
+        <p class="instructor-bio">
+          محمد نصرتیان، توسعه‌دهنده بک‌اند با بیش از ۵ سال تجربه حرفه‌ای در توسعه نرم‌افزار و همکاری با استارتاپ‌های مختلف. علاقه‌مند به طراحی و ساخت سیستم‌های نرم‌افزاری و انتقال تجربه‌های عملی توسعه بک‌اند به برنامه‌نویسان تازه‌کار.
+        </p>
+        <div class="instructor-stats">
+          <div class="inst-stat">
+            <div class="inst-stat-value">۵+</div>
+            <div class="inst-stat-label">سال سابقه</div>
+          </div>
+          <div class="inst-stat">
+            <div class="inst-stat-value">۲۰+</div>
+            <div class="inst-stat-label">پروژه واقعی</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curriculum Section -->
+  <section id="curriculum">
+    <div class="section-header">
+      <div class="section-label">مسیر یادگیری</div>
+      <h2 class="section-title">سرفصل‌های دوره</h2>
+      <p class="section-subtitle">
+        ۴ بخش و ۱۸ جلسه، از مقدماتی تا پیشرفته — روی هر بخش کلیک کن تا جلسه‌ها و خروجی عملی‌شون رو ببینی
+      </p>
+    </div>
+
+    <div class="curriculum-container">
+      <!-- بخش اول -->
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۱</div>
+            <div class="module-title">بخش اول: مبانی و بک‌اند</div>
+            <div class="module-lessons">(جلسات ۱–۸)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱</div>
+            <span>بک‌اند چیست؟ چرخه درخواست و پاسخ</span>
+            <span class="lesson-duration">خروجی: ترسیم مسیر یک درخواست از کلاینت تا سرور</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۲</div>
+            <span>اولین برنامه Go، متغیرها و انواع داده</span>
+            <span class="lesson-duration">خروجی: ساخت یک برنامه کوچک</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۳</div>
+            <span>شرط‌ها، حلقه‌ها و کنترل جریان</span>
+            <span class="lesson-duration">خروجی: پیاده‌سازی قوانین یک سیستم رزرو</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۴</div>
+            <span>توابع و مدیریت خطا</span>
+            <span class="lesson-duration">خروجی: جداسازی قوانین کسب‌وکار</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۵</div>
+            <span>Struct، Slice، Map و مدل‌سازی داده</span>
+            <span class="lesson-duration">خروجی: ساخت مدل‌های اولیه سیستم رزرو</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۶</div>
+            <span>Git، دیباگ و ساختار پروژه</span>
+            <span class="lesson-duration">خروجی: نسخه‌بندی و اشکال‌زدایی پروژه</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۷</div>
+            <span>شبکه، کلاینت و سرور، IP و Port</span>
+            <span class="lesson-duration">خروجی: مشاهده ارتباط کلاینت و سرور</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۸</div>
+            <span>TCP، اتصال و جریان بایت‌ها</span>
+            <span class="lesson-duration">خروجی: ساخت یک TCP Server ساده</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- بخش دوم -->
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۲</div>
+            <div class="module-title">بخش دوم: شبکه، HTTP و API</div>
+            <div class="module-lessons">(جلسات ۹–۱۲)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۹</div>
+            <span>ساختار HTTP و تجزیه دستی یک درخواست ساده</span>
+            <span class="lesson-duration">خروجی: خواندن یک درخواست خام و تولید پاسخ</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۰</div>
+            <span>HTTP در Go و کتابخانه net/http</span>
+            <span class="lesson-duration">خروجی: ساخت اولین HTTP Server</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۱</div>
+            <span>URL، متدها، هدرها، Status Code و JSON</span>
+            <span class="lesson-duration">خروجی: طراحی و پیاده‌سازی چند endpoint</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۲</div>
+            <span>Routing، Validation و مدیریت خطا در API</span>
+            <span class="lesson-duration">خروجی: ساخت API برای سیستم رزرو</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- بخش سوم -->
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۳</div>
+            <div class="module-title">بخش سوم: پایگاه داده</div>
+            <div class="module-lessons">(جلسات ۱۳–۱۵)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۳</div>
+            <span>Docker و اجرای سرویس‌ها</span>
+            <span class="lesson-duration">خروجی: اجرای PostgreSQL در کانتینر</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۴</div>
+            <span>مدل‌سازی رابطه‌ای و SQL</span>
+            <span class="lesson-duration">خروجی: طراحی جداول و اجرای Query</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۵</div>
+            <span>اتصال Go به PostgreSQL</span>
+            <span class="lesson-duration">خروجی: ذخیره و بازیابی اطلاعات از طریق API</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- بخش چهارم -->
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۴</div>
+            <div class="module-title">بخش چهارم: تست و امنیت</div>
+            <div class="module-lessons">(جلسات ۱۶–۱۸)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۶</div>
+            <span>تست، تنظیمات و امنیت پایه</span>
+            <span class="lesson-duration">خروجی: تست قوانین و شناسایی مشکلات امنیتی رایج</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۷</div>
+            <span>پروژه پایانی</span>
+            <span class="lesson-duration">خروجی: ساخت یک بک‌اند کوچک با دیتابیس</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۸</div>
+            <span>ارائه پروژه‌ها و مرور مفاهیم</span>
+            <span class="lesson-duration">خروجی: توضیح معماری و بررسی نقاط ضعف پروژه</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section id="contact">
+    <div class="cta-section">
+      <div class="cta-content">
+        <h2>آماده‌ای اولین سرورت رو روشن کنی؟ 🚀</h2>
+        <p>
+          همین حالا ثبت‌نام کن و جزو اولین کسانی باش که به‌عنوان توسعه‌دهنده بک‌اند وارد بازار کار می‌شن.
+          ظرفیت دوره محدود است!
+        </p>
+        <a href="index.html#contact" class="btn btn-primary" style="font-size: 1.25rem; padding: 1.25rem 2.5rem;">
+          🖥️ ثبت‌نام در دوره — ۱۳,۹۹۹,۰۰۰ تومان
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">Spawn<span>School</span></div>
+    <p class="footer-text">
+      © ۱۴۰۵ تمام حقوق برای آموزشگاه Spawn School محفوظ است.
+    </p>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    function toggleMenu() {
+      document.getElementById('nav-menu').classList.toggle('active');
+    }
+
+    // Module accordion toggle
+    function toggleModule(header) {
+      const module = header.parentElement;
+      const isActive = module.classList.contains('active');
+
+      // Close all modules
+      document.querySelectorAll('.module-item').forEach(m => {
+        m.classList.remove('active');
+      });
+
+      // Open clicked module if it wasn't active
+      if (!isActive) {
+        module.classList.add('active');
+      }
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+        document.getElementById('nav-menu').classList.remove('active');
+      });
+    });
+
+    // Close mobile menu on window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        document.getElementById('nav-menu').classList.remove('active');
+      }
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 100) {
+        header.style.background = 'rgba(7, 17, 13, 0.95)';
+      } else {
+        header.style.background = 'var(--glass)';
+      }
+    });
+
+    /* ===== Live server-mesh background ===== */
+    (function () {
+      const canvas = document.getElementById('mesh-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let W = 0, H = 0, dpr = 1;
+      let nodes = [];
+      const packets = [];
+      const LINK_DIST = 170;
+
+      const palette = ['52,211,153', '52,211,153', '52,211,153', '45,212,191', '251,191,36'];
+
+      function pickColor() {
+        return palette[Math.floor(Math.random() * palette.length)];
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = canvas.clientWidth;
+        H = canvas.clientHeight;
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const count = Math.max(16, Math.min(44, Math.round((W * H) / 46000)));
+        nodes = [];
+        for (let i = 0; i < count; i++) {
+          nodes.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            r: 1.6 + Math.random() * 2.4,
+            color: pickColor(),
+            tw: Math.random() * Math.PI * 2
+          });
+        }
+        packets.length = 0;
+      }
+
+      function spawnPacket() {
+        if (nodes.length < 2) return;
+        const a = nodes[Math.floor(Math.random() * nodes.length)];
+        let best = null, bestD = LINK_DIST;
+        for (const n of nodes) {
+          if (n === a) continue;
+          const d = Math.hypot(a.x - n.x, a.y - n.y);
+          if (d < bestD) { bestD = d; best = n; }
+        }
+        if (!best) return;
+        packets.push({
+          ax: a.x, ay: a.y, bx: best.x, by: best.y, t: 0,
+          speed: 0.006 + Math.random() * 0.01,
+          color: Math.random() < 0.8 ? '52,211,153' : '251,191,36'
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Drift nodes
+        for (const n of nodes) {
+          n.x += n.vx;
+          n.y += n.vy;
+          if (n.x < -20 || n.x > W + 20) n.vx *= -1;
+          if (n.y < -20 || n.y > H + 20) n.vy *= -1;
+          n.tw += 0.02;
+        }
+
+        // Links between nearby nodes
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i], b = nodes[j];
+            const d = Math.hypot(a.x - b.x, a.y - b.y);
+            if (d < LINK_DIST) {
+              const alpha = (1 - d / LINK_DIST) * 0.34;
+              ctx.strokeStyle = 'rgba(52,211,153,' + alpha.toFixed(3) + ')';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Nodes with soft halo
+        for (const n of nodes) {
+          const pulse = 0.75 + Math.sin(n.tw) * 0.25;
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(' + n.color + ',0.06)';
+          ctx.arc(n.x, n.y, n.r * 3.4, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(' + n.color + ',' + (0.45 * pulse).toFixed(3) + ')';
+          ctx.arc(n.x, n.y, n.r * pulse, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Traffic packets
+        if (!reduce) {
+          if (packets.length < 7 && Math.random() < 0.06) spawnPacket();
+          for (let i = packets.length - 1; i >= 0; i--) {
+            const p = packets[i];
+            p.t += p.speed;
+            if (p.t >= 1) { packets.splice(i, 1); continue; }
+            const t = p.t;
+            const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            const x = p.ax + (p.bx - p.ax) * e;
+            const y = p.ay + (p.by - p.ay) * e;
+            const fade = t < 0.15 ? t / 0.15 : t > 0.85 ? (1 - t) / 0.15 : 1;
+
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(' + p.color + ',' + (0.15 * fade).toFixed(3) + ')';
+            ctx.arc(x, y, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(' + p.color + ',' + (0.85 * fade).toFixed(3) + ')';
+            ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      let raf;
+      function loop() {
+        draw();
+        raf = requestAnimationFrame(loop);
+      }
+
+      resize();
+      draw();
+      if (!reduce) loop();
+
+      window.addEventListener('resize', resize);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(raf);
+        } else if (!reduce) {
+          loop();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

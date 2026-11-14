@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>اسپاون اسکول | آموزشگاه بازی‌سازی</title>
+<meta name="description" content="اسپاون اسکول؛ آموزشگاه تخصصی بازی‌سازی. دوره‌های یونیتی، مدل‌سازی سه‌بعدی، دیجیتال پینت، بک‌اند، تولید ویدئو با هوش مصنوعی، هک و امنیت و پایتون." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08080f;
+    --bg-2:#0d0e1a;
+    --panel:rgba(19,21,38,.82);
+    --line:rgba(255,255,255,.07);
+    --lime:#7cf03d;
+    --cyan:#25e0f5;
+    --magenta:#ff3ea5;
+    --violet:#8b5cf6;
+    --amber:#ffc53d;
+    --text:#e9ecf5;
+    --muted:#98a0b8;
+    --radius:20px;
+    --font:'Vazirmatn','Segoe UI',Tahoma,sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.85;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--lime);color:#04120a}
+  a{color:inherit;text-decoration:none}
+  .ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+
+  /* ---------- global atmosphere ---------- */
+  .scanlines{
+    position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.35;
+    background:repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0 1px,transparent 1px 4px);
+    mix-blend-mode:overlay;
+  }
+  .glow-top{
+    position:fixed;top:-25vh;left:50%;transform:translateX(-50%);
+    width:120vw;height:60vh;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at center, rgba(139,92,246,.28), transparent 65%);
+    filter:blur(20px);
+  }
+
+  .wrap{width:min(1200px,92vw);margin-inline:auto;position:relative;z-index:1}
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(14px);
+    background:linear-gradient(180deg,rgba(8,8,15,.92),rgba(8,8,15,.65));
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;gap:26px;justify-content:space-between;padding:14px 0}
+  .logo{display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .logo-mark{
+    width:44px;height:44px;border-radius:12px;position:relative;
+    background:linear-gradient(135deg,var(--lime),var(--cyan) 55%,var(--violet));
+    display:grid;place-items:center;
+    box-shadow:0 0 22px rgba(124,240,61,.45), inset 0 0 0 2px rgba(0,0,0,.35);
+  }
+  .logo-mark svg{width:22px;height:22px}
+  .logo-txt strong{display:block;font-size:1.05rem;letter-spacing:.4px;line-height:1.4}
+  .logo-txt span{display:block;font-size:.68rem;color:var(--muted);letter-spacing:2.6px;direction:ltr}
+  nav.links{display:flex;gap:6px;align-items:center}
+  nav.links a{
+    padding:9px 14px;border-radius:10px;font-size:.9rem;color:var(--muted);
+    transition:.25s;position:relative;
+  }
+  nav.links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;justify-content:center;
+    padding:13px 24px;border-radius:12px;font-weight:700;font-size:.92rem;
+    border:1px solid transparent;cursor:pointer;transition:.28s;white-space:nowrap;
+  }
+  .btn-primary{
+    background:linear-gradient(120deg,var(--lime),#b6ff6a);
+    color:#06210a;
+    box-shadow:0 10px 28px -12px rgba(124,240,61,.9), inset 0 -3px 0 rgba(0,0,0,.18);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -12px rgba(124,240,61,1)}
+  .btn-ghost{
+    background:rgba(255,255,255,.04);color:var(--text);border-color:rgba(255,255,255,.14);
+  }
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(37,224,245,.08)}
+  .burger{display:none;background:none;border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer}
+  .burger span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;border-radius:2px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:78px 0 40px;overflow:hidden}
+  .grid-floor{
+    position:absolute;inset-inline:-20%;bottom:-6%;height:58vh;z-index:0;opacity:.5;
+    background:
+      repeating-linear-gradient(90deg, rgba(37,224,245,.22) 0 1px, transparent 1px 78px),
+      repeating-linear-gradient(0deg, rgba(255,62,165,.18) 0 1px, transparent 1px 78px);
+    transform:perspective(620px) rotateX(64deg);
+    transform-origin:bottom center;
+    animation:floor 9s linear infinite;
+    mask-image:linear-gradient(180deg,transparent,#000 55%,#000);
+  }
+  @keyframes floor{to{background-position:0 0,0 78px}}
+  .hero-grid{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:center;
+    position:relative;z-index:1;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:7px 16px 7px 10px;border-radius:99px;font-size:.78rem;font-weight:600;
+    color:var(--lime);background:rgba(124,240,61,.08);
+    border:1px solid rgba(124,240,61,.28);
+  }
+  .badge i{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime);animation:pulse 1.8s infinite}
+  @keyframes pulse{50%{opacity:.35;transform:scale(.75)}}
+  h1{
+    font-size:clamp(2.15rem,5.2vw,4rem);
+    font-weight:900;line-height:1.3;margin:22px 0 6px;letter-spacing:-.5px;
+  }
+  .grad{
+    background:linear-gradient(100deg,var(--lime),var(--cyan) 45%,var(--magenta) 85%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{color:var(--muted);font-size:1.03rem;max-width:56ch;margin-top:16px}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+  .stats{display:flex;gap:34px;flex-wrap:wrap;margin-top:44px;padding-top:26px;border-top:1px solid var(--line)}
+  .stat b{
+    display:block;font-size:1.75rem;font-weight:900;letter-spacing:-.5px;
+    background:linear-gradient(180deg,#fff,#8f9bbd);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .stat span{font-size:.8rem;color:var(--muted)}
+
+  /* hero card + cube */
+  .hero-card{
+    position:relative;border-radius:var(--radius);padding:26px;
+    background:linear-gradient(160deg,rgba(26,28,50,.9),rgba(11,12,22,.92));
+    border:1px solid rgba(139,92,246,.3);
+    box-shadow:0 30px 70px -40px rgba(139,92,246,.8), inset 0 1px 0 rgba(255,255,255,.06);
+    animation:floatCard 7s ease-in-out infinite;
+  }
+  @keyframes floatCard{50%{transform:translateY(-12px)}}
+  .hero-card::after{
+    content:"";position:absolute;inset:-1px;border-radius:var(--radius);pointer-events:none;
+    background:
+      linear-gradient(var(--cyan),var(--cyan)) 0 0/18px 2px no-repeat,
+      linear-gradient(var(--cyan),var(--cyan)) 0 0/2px 18px no-repeat,
+      linear-gradient(var(--magenta),var(--magenta)) 100% 100%/18px 2px no-repeat,
+      linear-gradient(var(--magenta),var(--magenta)) 100% 100%/2px 18px no-repeat;
+  }
+  .cube-scene{height:170px;display:grid;place-items:center;perspective:700px;margin-bottom:6px}
+  .cube{
+    position:relative;width:96px;height:96px;transform-style:preserve-3d;
+    animation:spin 14s linear infinite;
+  }
+  @keyframes spin{
+    to{transform:rotateX(360deg) rotateY(360deg)}
+  }
+  .cube .face{
+    position:absolute;inset:0;border:1.5px solid var(--lime);
+    background:rgba(124,240,61,.05);
+    box-shadow:inset 0 0 26px rgba(124,240,61,.28);
+  }
+  .cube .f1{transform:translateZ(48px)}
+  .cube .f2{transform:rotateY(180deg) translateZ(48px);border-color:var(--cyan);background:rgba(37,224,245,.06);box-shadow:inset 0 0 26px rgba(37,224,245,.28)}
+  .cube .f3{transform:rotateY(90deg) translateZ(48px);border-color:var(--magenta);background:rgba(255,62,165,.05);box-shadow:inset 0 0 26px rgba(255,62,165,.25)}
+  .cube .f4{transform:rotateY(-90deg) translateZ(48px);border-color:var(--violet);background:rgba(139,92,246,.07)}
+  .cube .f5{transform:rotateX(90deg) translateZ(48px);border-color:var(--amber);background:rgba(255,197,61,.05)}
+  .cube .f6{transform:rotateX(-90deg) translateZ(48px);border-color:var(--cyan);background:rgba(37,224,245,.05)}
+
+  .xp-head{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:var(--muted);margin-bottom:8px}
+  .xp-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid var(--line)}
+  .xp-fill{
+    height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--cyan),var(--lime));
+    box-shadow:0 0 16px rgba(124,240,61,.7);
+    animation:xp 3.2s .6s cubic-bezier(.2,.9,.2,1) forwards;
+  }
+  @keyframes xp{to{width:86%}}
+  .hero-card .note{
+    margin-top:16px;font-size:.82rem;color:var(--muted);
+    padding-top:14px;border-top:1px dashed rgba(255,255,255,.1);
+  }
+  .hero-card .note b{color:var(--lime)}
+
+  /* ---------- ticker ---------- */
+  .ticker{
+    border-block:1px solid var(--line);
+    background:linear-gradient(90deg,rgba(124,240,61,.05),rgba(139,92,246,.05));
+    overflow:hidden;padding:12px 0;margin:20px 0 0;
+  }
+  .ticker-track{display:flex;gap:36px;width:max-content;animation:slide 26s linear infinite}
+  .ticker-track span{
+    font-size:.82rem;letter-spacing:1px;color:var(--muted);white-space:nowrap;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .ticker-track span em{color:var(--lime);font-style:normal}
+  @keyframes slide{to{transform:translateX(50%)}}
+
+  /* ---------- section framing ---------- */
+  section{padding:86px 0;position:relative}
+  .sec-head{margin-bottom:46px;max-width:64ch}
+  .sec-tag{
+    display:inline-flex;align-items:center;gap:10px;font-size:.74rem;letter-spacing:2px;
+    color:var(--cyan);font-weight:700;direction:ltr;margin-bottom:14px;
+  }
+  .sec-tag::before{content:"";width:26px;height:2px;background:var(--cyan);display:block}
+  h2{font-size:clamp(1.6rem,3.2vw,2.45rem);font-weight:900;line-height:1.4;letter-spacing:-.5px}
+  .sec-head p{color:var(--muted);margin-top:14px;font-size:.98rem}
+
+  /* ---------- courses ---------- */
+  .courses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .course{
+    position:relative;display:flex;flex-direction:column;
+    padding:26px 24px;border-radius:18px;overflow:hidden;
+    background:linear-gradient(165deg,rgba(24,26,44,.9),rgba(11,12,21,.92));
+    border:1px solid rgba(255,255,255,.07);
+    transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s;
+  }
+  .course::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:.35s;
+    background:
+      linear-gradient(var(--accent),var(--accent)) 0 0/16px 1.5px no-repeat,
+      linear-gradient(var(--accent),var(--accent)) 0 0/1.5px 16px no-repeat,
+      linear-gradient(var(--accent),var(--accent)) 100% 100%/16px 1.5px no-repeat,
+      linear-gradient(var(--accent),var(--accent)) 100% 100%/1.5px 16px no-repeat;
+  }
+  .course:hover{transform:translateY(-7px);border-color:rgba(255,255,255,.16);box-shadow:0 24px 50px -26px rgba(0,0,0,.9)}
+  .course:hover::before{opacity:1}
+  .course .blob{
+    position:absolute;top:-60px;left:-40px;width:150px;height:150px;border-radius:50%;
+    background:var(--accent);opacity:.11;filter:blur(28px);transition:.4s;
+  }
+  .course:hover .blob{opacity:.22;transform:scale(1.15)}
+  .c-icon{
+    width:52px;height:52px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+    color:var(--accent);transition:.35s;
+  }
+  .course:hover .c-icon{background:var(--accent);color:#06100a;transform:rotate(-6deg) scale(1.06);box-shadow:0 12px 26px -12px var(--accent)}
+  .c-icon svg{width:26px;height:26px}
+  .course h3{font-size:1.08rem;font-weight:800;margin-bottom:9px}
+  .course p{font-size:.87rem;color:var(--muted);flex:1}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 18px}
+  .tag{
+    font-size:.68rem;padding:4px 10px;border-radius:7px;color:var(--muted);
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);
+    direction:ltr;
+  }
+  .c-link{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:14px;border-top:1px solid rgba(255,255,255,.07);
+    font-size:.85rem;font-weight:700;color:var(--accent);
+  }
+  .c-link .arrow{transition:.3s}
+  .course:hover .c-link .arrow{transform:translateX(-7px)}
+  .flag{
+    position:absolute;top:16px;left:16px;font-size:.66rem;font-weight:800;
+    padding:3px 9px;border-radius:6px;color:#160019;
+    background:linear-gradient(120deg,var(--magenta),#ff9ecb);
+    box-shadow:0 0 18px rgba(255,62,165,.6);
+  }
+
+  /* ---------- about ---------- */
+  .about{background:linear-gradient(180deg,transparent,rgba(139,92,246,.07),transparent)}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}
+  .about-visual{
+    position:relative;border-radius:24px;padding:30px;min-height:340px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(37,224,245,.18), transparent 55%),
+      radial-gradient(circle at 75% 80%, rgba(255,62,165,.16), transparent 55%),
+      rgba(13,14,26,.85);
+    border:1px solid rgba(139,92,246,.28);
+    display:grid;gap:12px;align-content:center;
+    overflow:hidden;
+  }
+  .about-visual::before{
+    content:"";position:absolute;inset:0;opacity:.16;
+    background:
+      repeating-linear-gradient(90deg,rgba(255,255,255,.25) 0 1px,transparent 1px 46px),
+      repeating-linear-gradient(0deg,rgba(255,255,255,.25) 0 1px,transparent 1px 46px);
+    mask-image:radial-gradient(circle at center,#000,transparent 78%);
+  }
+  .pillar{
+    position:relative;display:flex;align-items:center;gap:14px;padding:15px 18px;border-radius:14px;
+    background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(4px);transition:.3s;
+  }
+  .pillar:hover{transform:translateX(-6px);border-color:var(--lime);background:rgba(124,240,61,.07)}
+  .pillar .dot{width:9px;height:9px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime);flex-shrink:0}
+  .pillar b{font-size:.92rem}
+  .pillar small{display:block;color:var(--muted);font-size:.75rem;font-weight:400}
+  .about-text p{color:var(--muted);font-size:.96rem;margin-bottom:14px}
+  .about-text p strong{color:var(--text)}
+  .checks{list-style:none;margin-top:22px;display:grid;gap:12px}
+  .checks li{display:flex;gap:12px;align-items:flex-start;font-size:.92rem}
+  .checks svg{width:20px;height:20px;flex-shrink:0;color:var(--lime);margin-top:5px}
+
+  /* ---------- quotes ---------- */
+  .quotes{position:relative;overflow:hidden}
+  .quote-box{
+    position:relative;border-radius:26px;padding:56px 40px;text-align:center;
+    background:linear-gradient(140deg,rgba(124,240,61,.09),rgba(139,92,246,.11));
+    border:1px solid rgba(255,255,255,.1);
+    overflow:hidden;
+  }
+  .quote-box::before{
+    content:"”";position:absolute;top:-24px;right:26px;font-size:9rem;line-height:1;
+    color:rgba(255,255,255,.07);font-family:Georgia,serif;
+  }
+  .quote-text{
+    font-size:clamp(1.1rem,2.4vw,1.55rem);font-weight:700;line-height:1.8;
+    max-width:44ch;margin:0 auto;transition:opacity .45s, transform .45s;min-height:3.6em;
+    display:grid;place-items:center;
+  }
+  .quote-author{margin-top:18px;font-size:.85rem;color:var(--lime);transition:opacity .45s}
+  .fading{opacity:0;transform:translateY(8px)}
+  .quote-dots{display:flex;gap:9px;justify-content:center;margin-top:30px}
+  .quote-dots button{
+    width:9px;height:9px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,.22);transition:.25s;
+  }
+  .quote-dots button.on{background:var(--lime);box-shadow:0 0 12px var(--lime);width:26px;border-radius:99px}
+
+  /* ---------- contact ---------- */
+  .contact-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:34px}
+  .contact-list{display:grid;gap:14px}
+  .c-item{
+    display:flex;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;
+    background:var(--panel);border:1px solid var(--line);transition:.3s;
+  }
+  .c-item:hover{border-color:var(--cyan);transform:translateX(-5px)}
+  .c-item .ico{
+    width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;
+    background:rgba(37,224,245,.1);color:var(--cyan);border:1px solid rgba(37,224,245,.22);
+  }
+  .c-item .ico svg{width:20px;height:20px}
+  .c-item small{display:block;color:var(--muted);font-size:.74rem;margin-bottom:2px}
+  .c-item b{font-size:.95rem;font-weight:700}
+
+  form.enroll{
+    padding:28px;border-radius:20px;
+    background:linear-gradient(160deg,rgba(24,26,44,.9),rgba(11,12,21,.92));
+    border:1px solid rgba(255,255,255,.09);
+    display:grid;gap:14px;
+  }
+  form.enroll h3{font-size:1.05rem;font-weight:800;margin-bottom:2px}
+  form.enroll p.hint{font-size:.8rem;color:var(--muted);margin-bottom:6px}
+  .field{display:grid;gap:6px}
+  .field label{font-size:.78rem;color:var(--muted)}
+  .field input,.field select,.field textarea{
+    width:100%;padding:12px 14px;border-radius:11px;font-family:var(--font);font-size:.88rem;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+    color:var(--text);outline:none;transition:.25s;resize:vertical;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{
+    border-color:var(--lime);background:rgba(124,240,61,.06);box-shadow:0 0 0 3px rgba(124,240,61,.12);
+  }
+  .field select option{background:#12131f}
+  .form-msg{
+    font-size:.82rem;color:var(--lime);display:none;padding:10px 14px;border-radius:10px;
+    background:rgba(124,240,61,.09);border:1px solid rgba(124,240,61,.25);
+  }
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:34px 0 26px;margin-top:20px}
+  .foot-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+  .foot-inner p{font-size:.78rem;color:var(--muted)}
+  .socials{display:flex;gap:10px}
+  .socials a{
+    width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);transition:.25s;
+  }
+  .socials a:hover{color:var(--lime);border-color:var(--lime);transform:translateY(-3px)}
+  .socials svg{width:18px;height:18px}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1024px){
+    .hero-grid{grid-template-columns:1fr;gap:38px}
+    .hero-card{max-width:460px}
+    .courses-grid{grid-template-columns:repeat(2,1fr)}
+    .about-grid{grid-template-columns:1fr;gap:34px}
+    .contact-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:760px){
+    nav.links{
+      position:fixed;inset:70px 4vw auto 4vw;flex-direction:column;align-items:stretch;
+      background:rgba(10,11,20,.98);border:1px solid var(--line);border-radius:18px;padding:12px;
+      box-shadow:0 30px 60px -20px #000;display:none;z-index:50;
+    }
+    nav.links.open{display:flex}
+    nav.links a{padding:12px 14px}
+    .burger{display:block}
+    .nav-inner .btn-primary{display:none}
+    .courses-grid{grid-template-columns:1fr}
+    .stats{gap:22px}
+    .quote-box{padding:40px 22px}
+    section{padding:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-top"></div>
+<div class="scanlines"></div>
+
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="#top">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2.2" stroke-linejoin="round">
+          <path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5M12 12v10"/>
+        </svg>
+      </div>
+      <div class="logo-txt">
+        <strong>اسپاون اسکول</strong>
+        <span>SPAWN SCHOOL</span>
+      </div>
+    </a>
+
+    <nav class="links" id="menu">
+      <a href="#top">خانه</a>
+      <a href="#courses">دوره‌ها</a>
+      <a href="#about">درباره ما</a>
+      <a href="#quotes">انگیزه</a>
+      <a href="#contact">تماس با ما</a>
+    </nav>
+
+    <a class="btn btn-primary" href="#contact">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg>
+      مشاوره رایگان
+    </a>
+
+    <button class="burger" id="burger" aria-label="منو">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<main id="top">
+<section class="hero">
+  <div class="grid-floor"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-text reveal">
+        <span class="badge"><i></i> ثبت‌نام ترم جدید شروع شد</span>
+        <h1>بازی بساز،<br><span class="grad">جهانت رو خلق کن.</span></h1>
+        <p class="lead">
+          اسپاون اسکول یک آموزشگاه تخصصی بازی‌سازی است؛ جایی که از اولین خط کد تا انتشار بازی روی استور،
+          کنارت هستیم. آموزش پروژه‌محور، مربی‌های فعال صنعت و مسیر شغلی واقعی.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#courses">
+            شروع مسیر بازی‌سازی
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#about">چرا اسپاون اسکول؟</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b class="num" data-to="7">۰</b><span>دوره تخصصی</span></div>
+          <div class="stat"><b class="num" data-to="6">۰</b><span>مربی و منتور</span></div>
+        </div>
+      </div>
+
+      <div class="hero-card reveal">
+        <div class="cube-scene">
+          <div class="cube">
+            <span class="face f1"></span><span class="face f2"></span>
+            <span class="face f3"></span><span class="face f4"></span>
+            <span class="face f5"></span><span class="face f6"></span>
+          </div>
+        </div>
+        <div class="xp-head">
+          <span>مسیر تو تا اولین بازی</span>
+          <span class="ltr">XP 86%</span>
+        </div>
+        <div class="xp-bar"><div class="xp-fill"></div></div>
+        <div class="note">
+          <b>LEVEL 1 → LEVEL 7</b> · از یادگیری پایه تا ساخت نمونه‌کار حرفه‌ای و ورود به بازار کار.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TICKER ================= -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span><em>◆</em> UNITY</span>
+    <span><em>◆</em> 3D MODELING</span>
+    <span><em>◆</em> DIGITAL PAINT</span>
+    <span><em>◆</em> BACKEND</span>
+    <span><em>◆</em> AI VIDEO</span>
+    <span><em>◆</em> SECURITY</span>
+    <span><em>◆</em> PYTHON</span>
+    <span><em>◆</em> PLAY. LEARN. CREATE.</span>
+    <span><em>◆</em> UNITY</span>
+    <span><em>◆</em> 3D MODELING</span>
+    <span><em>◆</em> DIGITAL PAINT</span>
+    <span><em>◆</em> BACKEND</span>
+    <span><em>◆</em> AI VIDEO</span>
+    <span><em>◆</em> SECURITY</span>
+    <span><em>◆</em> PYTHON</span>
+    <span><em>◆</em> PLAY. LEARN. CREATE.</span>
+  </div>
+</div>
+
+<!-- ================= COURSES ================= -->
+<section id="courses">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">LEVEL 01 — ROADMAP</span>
+      <h2>دوره‌های <span class="grad">اسپاون اسکول</span></h2>
+      <p>هر دوره یک مرحله از بازی است؛ یکی رو انتخاب کن و واردش شو. روی هر کارت بزن تا صفحه اختصاصی دوره باز بشه.</p>
+    </div>
+
+    <div class="courses-grid">
+
+      <!-- 1. Unity -->
+      <a class="course reveal" href="unity.html" style="--accent:var(--lime)">
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5M12 12v10"/>
+          </svg>
+        </div>
+        <h3>بازی‌سازی با یونیتی</h3>
+        <p>از محیط یونیتی و زبان C# تا فیزیک، انیمیشن، UI و انتشار نهایی بازی روی استور — کاملاً پروژه‌محور.</p>
+        <div class="tags"><span class="tag">Unity 3D</span><span class="tag">C#</span><span class="tag">Gameplay</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- 2. 3D Modeling -->
+      <a class="course reveal" href="3d-modeling.html" style="--accent:var(--cyan)">
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3>مدل‌سازی سه‌بعدی</h3>
+        <p>مدل‌سازی اَسِت بازی با Blender؛ از مدل‌سازی تا ریگ، UV و بهینه‌سازی برای موتور بازی.</p>
+        <div class="tags"><span class="tag">Blender</span><span class="tag">Sculpting</span><span class="tag">Rigging</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- 3. Digital Paint -->
+      <a class="course reveal" href="digital-paint.html" style="--accent:var(--magenta)">
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M12 19c-3.3 0-6-2.7-6-6a6 6 0 0 1 6-6c2 0 3 1 3 2 0 2-3 1.5-3 3.5 0 1 .8 1.5 2 1.5H17a4 4 0 0 0 4-4c0-5-4-7-9-7a9 9 0 0 0 0 18h4"/>
+            <circle cx="7.5" cy="10.5" r="1"/><circle cx="10" cy="7" r="1"/>
+          </svg>
+        </div>
+        <h3>دیجیتال پینت</h3>
+        <p>طراحی کانسپت آرت، کاراکتر و محیط بازی؛ یادگیری پرسپکتیو، نورپردازی و رندر با فتوشاپ و Procreate.</p>
+        <div class="tags"><span class="tag">Concept Art</span><span class="tag">Photoshop</span><span class="tag">Character</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- 4. Backend -->
+      <a class="course reveal" href="backend.html" style="--accent:var(--violet)">
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/>
+            <circle cx="7" cy="6.5" r="1"/><circle cx="7" cy="17.5" r="1"/>
+          </svg>
+        </div>
+        <h3>بک‌اند و سرور بازی</h3>
+        <p>ساخت API، دیتابیس بازیکن‌ها، اقتصاد درون‌بازی و سیستم مچ‌میکینگ برای بازی‌های چندنفره.</p>
+        <div class="tags"><span class="tag">API</span><span class="tag">Database</span><span class="tag">Multiplayer</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- 5. AI Video -->
+      <a class="course reveal" href="ai-video.html" style="--accent:var(--amber)">
+        <span class="flag">دوره ویژه</span>
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="M16 10l6-3v10l-6-3"/>
+            <path d="M8 9.5v4M6 11.5h4"/>
+          </svg>
+        </div>
+        <h3>تولید ویدئو با هوش مصنوعی</h3>
+        <p>از پرامپت تا ویدئوی سینمایی؛ ساخت تریلر بازی، تیزر و محتوای شبکه‌های اجتماعی با ابزارهای AI.</p>
+        <div class="tags"><span class="tag">Prompting</span><span class="tag">AI Video</span><span class="tag">Montage</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- 6. Security -->
+      <a class="course reveal" href="security.html" style="--accent:#ff5f5f">
+        <span class="flag">دوره ویژه</span>
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M12 2 4 5.5v6c0 5 3.4 9.2 8 10.5 4.6-1.3 8-5.5 8-10.5v-6L12 2Z"/>
+            <path d="M9 12l2.2 2.2L15.5 10"/>
+          </svg>
+        </div>
+        <h3>هک و امنیت</h3>
+        <p>تست نفوذ، تحلیل بدافزار و امنیت اپلیکیشن‌های بازی؛ محافظت از اکانت بازیکن‌ها و مقابله با تقلب.</p>
+        <div class="tags"><span class="tag">Pentest</span><span class="tag">Reverse</span><span class="tag">Anti-Cheat</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- 7. Python -->
+      <a class="course reveal" href="python.html" style="--accent:#9df05c">
+        <span class="flag">دوره ویژه</span>
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M8 4h5a3 3 0 0 1 3 3v3H8a3 3 0 0 0-3 3"/>
+            <path d="M16 20H11a3 3 0 0 1-3-3v-3h8a3 3 0 0 0 3-3"/>
+            <circle cx="10.5" cy="6.8" r=".9"/><circle cx="13.5" cy="17.2" r=".9"/>
+          </svg>
+        </div>
+        <h3>برنامه‌نویسی پایتون</h3>
+        <p>از صفر تا پروژه؛ مبانی پایتون، اتوماسیون، کار با داده و ورود به دنیای هوش مصنوعی و ابزارهای بازی‌سازی.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">Automation</span><span class="tag">Data</span></div>
+        <div class="c-link">مشاهده دوره <span class="arrow">←</span></div>
+      </a>
+
+      <!-- CTA card -->
+      <a class="course reveal" href="#contact" style="--accent:var(--cyan)">
+        <div class="blob"></div>
+        <div class="c-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>
+            <circle cx="12" cy="12" r="3.2"/>
+          </svg>
+        </div>
+        <h3>نمی‌دونی از کجا شروع کنی؟</h3>
+        <p>یه مشاوره رایگان بگیر؛ بر اساس سطح و هدف‌ت، مسیر یادگیری و ترتیب دوره‌ها رو برات می‌چینیم.</p>
+        <div class="tags"><span class="tag">Free</span><span class="tag">1:1</span><span class="tag">Guidance</span></div>
+        <div class="c-link">درخواست مشاوره <span class="arrow">←</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section id="about" class="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="pillar"><span class="dot"></span><div><b>آموزش پروژه‌محور</b><small>هر ترم یک پروژه واقعی، نه فقط تمرین کلاسی</small></div></div>
+        <div class="pillar"><span class="dot"></span><div><b>مربی‌های فعال صنعت</b><small>مدرس‌هایی که خودشان روی بازی‌های واقعی کار می‌کنند</small></div></div>
+        <div class="pillar"><span class="dot"></span><div><b>تیم‌سازی و گیم‌جم</b><small>برنامه‌نویس، آرتیست و دیزاینر کنار هم یک بازی می‌سازند</small></div></div>
+        <div class="pillar"><span class="dot"></span><div><b>مسیر ورود به بازار کار</b><small>ساخت پورتفولیو، منتورینگ و معرفی به استودیوها</small></div></div>
+      </div>
+
+      <div class="about-text reveal">
+        <span class="sec-tag">LEVEL 02 — ABOUT US</span>
+        <h2>ما بازی‌ساز <span class="grad">می‌سازیم</span>، نه فقط دانشجو</h2>
+        <p>
+          <strong>اسپاون اسکول</strong> از دل یک تیم بازی‌سازی متولد شد؛ تیمی که فهمید آموزش تئوری، هیچ‌وقت بازیساز
+          واقعی نمی‌سازد. برای همین از روز اول، کلاس‌ها را روی پروژه بنا کردیم.
+        </p>
+        <p>
+          اینجا یاد می‌گیری چطور یک ایده را از کاغذ تا بیلد نهایی ببری: موتور بازی، آرت، سرور و حتی محتوای تبلیغاتی.
+          هر دوره در ادامه دوره‌های قبل طراحی شده تا مسیرت مثل یک بازی، مرحله‌به‌مرحله جلو برود.
+        </p>
+        <ul class="checks">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+            کلاس‌های کوچک با بازخورد مستقیم روی کد و آرت خودت
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+            دسترسی به ویدئوهای ضبط‌شده و تمرین‌های هفتگی
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+            همراهی تیم اسپاون برای ساختن اولین بازی مستقل‌ت
+          </li>
+        </ul>
+        <div class="hero-actions" style="margin-top:28px">
+          <a class="btn btn-primary" href="#contact">رزرو جلسه مشاوره</a>
+          <a class="btn btn-ghost" href="#courses">دیدن دوره‌ها</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUOTES ================= -->
+<section id="quotes" class="quotes">
+  <div class="wrap">
+    <div class="quote-box reveal">
+      <div class="quote-text" id="quoteText">بازی‌های بزرگ، با یک ایده‌ی کوچک و یک تصمیم ساده شروع می‌شن: «شروع می‌کنم».</div>
+      <div class="quote-author" id="quoteAuthor">— تیم اسپاون اسکول</div>
+      <div class="quote-dots" id="quoteDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">LEVEL 03 — CONTACT</span>
+      <h2>با <span class="grad">اسپاون اسکول</span> در تماس باش</h2>
+      <p>هر سؤالی داری بپرس؛ درباره انتخاب دوره، شهریه، ساعات کلاس یا مسیر شغلی. جواب می‌دیم.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-list reveal">
+        <a class="c-item" href="tel:+989332112867">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1Z"/></svg></div>
+          <div><small>تلفن آموزشگاه</small><b class="ltr">۰۹۳۳ - ۲۱۱ - ۲۸۶۷</b></div>
+        </a>
+
+        <a class="c-item" href="mailto:support@spawnschool.ir">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6.5 9 6 9-6"/></svg></div>
+          <div><small>ایمیل</small><b class="ltr">support@spawnschool.ir</b></div>
+        </a>
+
+        <a class="c-item" href="https://instagram.com/spawn.school" target="_blank" rel="noopener">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1"/></svg></div>
+          <div><small>اینستاگرام</small><b class="ltr">@spawn.school</b></div>
+        </a>
+
+        <a class="c-item" href="https://t.me/spawnschoolbot" target="_blank" rel="noopener">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4 3 11l6 2.5 2.2 6.5L21 4Z"/><path d="M9 13.5 18 7"/></svg></div>
+          <div><small>ربات تلگرام</small><b class="ltr">@spawnschoolbot</b></div>
+        </a>
+
+        <a class="c-item" href="#contact">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
+          <div><small>آدرس</small><b>ساری، خیابان شهابی، نرسیده به چهارراه پانزده خرداد، شرکت طراوان</b></div>
+        </a>
+      </div>
+
+      <form class="enroll reveal" id="enrollForm">
+        <h3>فرم مشاوره و ثبت‌نام</h3>
+        <p class="hint">فرم رو پر کن، کارشناس آموزش در کمتر از یک روز کاری باهات تماس می‌گیره.</p>
+
+        <div class="field">
+          <label for="name">نام و نام خانوادگی</label>
+          <input id="name" type="text" placeholder="مثلاً سارا احمدی" required />
+        </div>
+
+        <div class="field">
+          <label for="phone">شماره تماس</label>
+          <input id="phone" type="tel" placeholder="۰۹۱۱ ۰۰۰ ۰۰ ۰۰" required />
+        </div>
+
+        <div class="field">
+          <label for="course">دوره مورد علاقه</label>
+          <select id="course">
+            <option>بازی‌سازی با یونیتی</option>
+            <option>مدل‌سازی سه‌بعدی</option>
+            <option>دیجیتال پینت</option>
+            <option>بک‌اند و سرور بازی</option>
+            <option>تولید ویدئو با هوش مصنوعی</option>
+            <option>هک و امنیت</option>
+            <option>برنامه‌نویسی پایتون</option>
+            <option>هنوز مطمئن نیستم، مشاوره می‌خوام</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="msg">پیام (اختیاری)</label>
+          <textarea id="msg" rows="3" placeholder="سطح فعلی‌ت رو بگو تا بهتر راهنمایی کنیم..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="width:100%">
+          ارسال درخواست
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4 3 11l6 2.5 2.2 6.5L21 4Z"/></svg>
+        </button>
+
+        <div class="form-msg" id="formMsg">✅ درخواستت ثبت شد! به‌زودی با تو تماس می‌گیریم. حالا وقتشه اولین مرحله بازی رو شروع کنی.</div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap foot-inner">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo-mark" style="width:36px;height:36px;border-radius:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#06210a" stroke-width="2.2" stroke-linejoin="round" style="width:18px;height:18px">
+          <path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="M3 7l9 5 9-5M12 12v10"/>
+        </svg>
+      </div>
+      <p>© ۱۴۰۵ اسپاون اسکول — آموزشگاه بازی‌سازی. تمام حقوق محفوظ است.</p>
+    </div>
+    <div class="socials">
+      <a href="https://instagram.com/spawn.school" target="_blank" rel="noopener" aria-label="اینستاگرام">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1"/></svg>
+      </a>
+      <a href="https://t.me/spawnschoolbot" target="_blank" rel="noopener" aria-label="تلگرام">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4 3 11l6 2.5 2.2 6.5L21 4Z"/><path d="M9 13.5 18 7"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ---------- mobile menu ---------- */
+  const burger = document.getElementById('burger');
+  const menu = document.getElementById('menu');
+  burger.addEventListener('click', () => menu.classList.toggle('open'));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+
+  /* ---------- reveal on scroll ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 70 + 'ms';
+    io.observe(el);
+  });
+
+  /* ---------- persian numbers ---------- */
+  const fa = n => Number(n).toLocaleString('fa-IR');
+
+  /* ---------- counters ---------- */
+  const counters = document.querySelectorAll('.num');
+  const cIo = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const to = +el.dataset.to;
+      const suffix = el.dataset.suffix || '';
+      let start = null;
+      const dur = 1500;
+      const step = (t) => {
+        if (!start) start = t;
+        const p = Math.min((t - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = fa(Math.floor(to * eased)) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      cIo.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => cIo.observe(c));
+
+  /* ---------- quotes slider ---------- */
+  const quotes = [
+    { t: 'بازی‌های بزرگ، با یک ایده‌ی کوچک و یک تصمیم ساده شروع می‌شن: «شروع می‌کنم».', a: '— تیم اسپاون اسکول' },
+    { t: 'هیچ‌کس اولین نسخه‌ش رو عالی نمی‌سازه. تو فقط باید نسخه‌ی بعدی رو بسازی.', a: '— مربی مسیر یونیتی' },
+    { t: 'مهارت، از تکرار ساخته می‌شه؛ نه از تماشا کردن. امروز یه لِوِل بالا برو.', a: '— تیم منتورینگ اسپاون' },
+    { t: 'بازی‌سازی دنیاییه که خودت قوانینش رو می‌نویسی. چرا مال خودت نباشه؟', a: '— اسپاون اسکول' }
+  ];
+  const qText = document.getElementById('quoteText');
+  const qAuthor = document.getElementById('quoteAuthor');
+  const qDots = document.getElementById('quoteDots');
+  let qIndex = 0, qTimer = null;
+
+  quotes.forEach((q, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'نقل‌قول ' + (i + 1));
+    if (i === 0) b.classList.add('on');
+    b.addEventListener('click', () => goQuote(i, true));
+    qDots.appendChild(b);
+  });
+
+  function goQuote(i, manual) {
+    qIndex = i;
+    qText.classList.add('fading');
+    qAuthor.classList.add('fading');
+    setTimeout(() => {
+      qText.textContent = quotes[i].t;
+      qAuthor.textContent = quotes[i].a;
+      qText.classList.remove('fading');
+      qAuthor.classList.remove('fading');
+    }, 300);
+    [...qDots.children].forEach((d, di) => d.classList.toggle('on', di === i));
+    if (manual) restartTimer();
+  }
+  function restartTimer() {
+    clearInterval(qTimer);
+    qTimer = setInterval(() => goQuote((qIndex + 1) % quotes.length, false), 6000);
+  }
+  restartTimer();
+
+  /* ---------- form ---------- */
+  const form = document.getElementById('enrollForm');
+  const formMsg = document.getElementById('formMsg');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const course = document.getElementById('course').value;
+    const msg = document.getElementById('msg').value.trim();
+    const subject = encodeURIComponent('درخواست مشاوره - ' + name);
+    const body = encodeURIComponent(
+      `نام و نام خانوادگی: ${name}\n`
+      + `شماره تماس: ${phone}\n`
+      + `دوره مورد علاقه: ${course}\n`
+      + `پیام: ${msg || '-'}`
+    );
+    const mailto = `mailto:s.b.makrani@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = mailto;
+    formMsg.style.display = 'block';
+    form.querySelector('button[type="submit"]').innerHTML = 'ارسال شد ✓';
+    setTimeout(() => { formMsg.style.display = 'none'; }, 9000);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<!-- Instructor Section   ۰  ۱  ۲  ۳  ۴  ۵  ۶  ۷  ۸  ۹  -->
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دوره آموزش مدلسازی سه بعدی | Spawn School</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0d0e14;
+      --bg-card: #161822;
+      --bg-card-hover: #1f2230;
+      --primary: #7c3aed;
+      --primary-light: #8b5cf6;
+      --accent: #06b6d4;
+      --accent-glow: #22d3ee;
+      --text-main: #ffffff;
+      --text-muted: #9ca3af;
+      --gradient-1: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+      --gradient-2: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      --gradient-glow: linear-gradient(135deg, #7c3aed, #06b6d4, #ec4899);
+      --glass: rgba(22, 24, 34, 0.8);
+      --border-glow: rgba(124, 58, 237, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-variant-numeric: normal;
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* ===== Animated Background ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+
+
+    .bg-grid {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background-image:
+        linear-gradient(rgba(6, 182, 212, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      transform: perspective(600px) rotateX(60deg) translateY(-100px) translateZ(-300px);
+      animation: gridMove 20s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes gridMove {
+      0% { transform: perspective(600px) rotateX(60deg) translateY(0) translateZ(-300px); }
+      100% { transform: perspective(600px) rotateX(60deg) translateY(50px) translateZ(-300px); }
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: orbFloat 15s ease-in-out infinite;
+    }
+
+    .orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; right: -100px; }
+    .orb-2 { width: 300px; height: 300px; background: var(--accent); bottom: -50px; left: -100px; animation-delay: -5s; }
+    .orb-3 { width: 250px; height: 250px; background: #ec4899; top: 50%; left: 30%; animation-delay: -10s; }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, -50px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.9); }
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent-glow);
+      border-radius: 50%;
+      animation: particleRise 8s linear infinite;
+    }
+
+    @keyframes particleRise {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+    }
+
+    /* ===== Header ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+    }
+
+    .logo span { color: var(--accent-glow); }
+
+    nav ul {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    nav a:hover { color: var(--text-main); }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-glow);
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    .cta-button {
+      background: var(--gradient-1);
+      color: white;
+      padding: 0.75rem 1.75rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.6);
+    }
+
+    /* ===== Back Button ===== */
+    .back-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 9999px;
+      background: var(--gradient-1);
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-main);
+      font-size: 1.75rem;
+      cursor: pointer;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 1100px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid var(--border-glow);
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-glow);
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent-glow);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      animation: fadeInUp 0.8s ease 0.2s backwards;
+    }
+
+    .hero h1 span {
+      background: var(--gradient-glow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      animation: fadeInUp 0.8s ease 0.4s backwards;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.6s backwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 50px rgba(124, 58, 237, 0.6);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-main);
+      border: 2px solid rgba(124, 58, 237, 0.5);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(124, 58, 237, 0.1);
+      border-color: var(--primary-light);
+      transform: translateY(-5px);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.8s backwards;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: var(--gradient-glow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== Section Styles ===== */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-label {
+      display: inline-block;
+      color: var(--accent-glow);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ===== Course Section ===== */
+    .course-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: 24px;
+      overflow: hidden;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.2);
+      animation: fadeInUp 1s ease;
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-glow);
+    }
+
+    .course-image {
+      width: 100%;
+      height: 320px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-image::before {
+      content: '📐';
+      font-size: 6rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .course-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, var(--bg-card) 0%, transparent 100%);
+    }
+
+    .course-content {
+      padding: 3rem;
+    }
+
+    .course-meta {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item span { color: var(--accent-glow); }
+
+    .course-description {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .course-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(124, 58, 237, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .highlight-item:hover {
+      background: rgba(124, 58, 237, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .highlight-icon {
+      font-size: 1.5rem;
+    }
+
+    .highlight-text {
+      font-weight: 600;
+    }
+
+    .course-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(124, 58, 237, 0.2);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .price-tag {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .current-price {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-glow);
+    }
+
+    .old-price {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    /* ===== Instructor Section ===== */
+    .instructor-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2.5rem;
+      align-items: center;
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.2);
+      animation: fadeInUp 1s ease 0.2s backwards;
+    }
+
+    .instructor-avatar {
+      width: 250px;
+      height: 250px;
+      border-radius: 20px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instructor-avatar::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border: 2px solid var(--border-glow);
+      border-radius: 20px;
+    }
+
+    .instructor-info h3 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .instructor-title {
+      color: var(--accent-glow);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .instructor-bio {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      text-align: justify;
+    }
+
+    .instructor-stats {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .inst-stat {
+      text-align: center;
+    }
+
+    .inst-stat-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .inst-stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .instructor-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 60px rgba(124, 58, 237, 0.3);
+    }
+
+    /* ===== Curriculum Section ===== */
+    .curriculum-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .module-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .module-item:hover {
+      border-color: var(--primary-light);
+      transform: translateX(-5px);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.2);
+    }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .module-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .module-title {
+      flex: 1;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-right: 1rem;
+    }
+
+    .module-lessons {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .module-toggle {
+      font-size: 1.5rem;
+      color: var(--accent-glow);
+      transition: transform 0.3s ease;
+    }
+
+    .module-item.active .module-toggle {
+      transform: rotate(180deg);
+    }
+
+    .module-lessons-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .module-item.active .module-lessons-list {
+      max-height: 1000px;
+    }
+
+    .lesson-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(124, 58, 237, 0.1);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .lesson-item:hover {
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--text-main);
+      padding-right: 1.75rem;
+    }
+
+    .play-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .lesson-duration {
+      margin-right: auto;
+      font-size: 0.85rem;
+    }
+
+    .lesson-separator {
+      grid-column: 1 / -1;
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent-glow);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ===== CTA Section ===== */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+      border-radius: 32px;
+      padding: 4rem 2rem;
+      text-align: center;
+      border: 1px solid var(--border-glow);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+      animation: rotateBg 20s linear infinite;
+    }
+
+    @keyframes rotateBg {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-content h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1rem;
+    }
+
+    .cta-content p {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: var(--bg-card);
+      border-top: 1px solid rgba(124, 58, 237, 0.2);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .footer-text {
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: var(--accent-glow); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+
+      /* دکمه بازگشت در موبایل فقط آیکون می‌شود تا هدر شلوغ نشود */
+      .back-btn { padding: 0.55rem; }
+      .back-btn .back-text { display: none; }
+
+      nav ul {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--bg-card);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+        border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+      }
+
+      nav ul.active { transform: translateY(0); }
+
+      .instructor-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .instructor-avatar {
+        margin: 0 auto;
+        width: 180px;
+        height: 180px;
+        font-size: 3.5rem;
+      }
+
+      .instructor-stats {
+        justify-content: center;
+      }
+
+      .course-content { padding: 2rem; }
+      .course-image { height: 240px; }
+      .module-header { flex-wrap: wrap; gap: 0.75rem; }
+      .module-title { margin-right: 0; }
+      .section-header { margin-bottom: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background with 3D Blender-like wireframe -->
+  <div class="bg-animation">
+    <canvas id="blender-canvas"></canvas>
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <script type="module">
+      // Import Three.js from CDN
+      import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+      (function() {
+        const canvas = document.getElementById('blender-canvas');
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        // Scene
+        const scene = new THREE.Scene();
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
+        camera.position.z = 8;
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Group to hold all objects
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // --- SPHERE (TorusKnot = complex 3D wireframe sphere) ---
+        const sphereGeo = new THREE.TorusKnotGeometry(2.6, 0.7, 120, 24);
+        const sphereMat = new THREE.MeshBasicMaterial({
+          color: 0x1d4ed8,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.25
+        });
+        const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+        sphere.position.x = -3.2;
+        group.add(sphere);
+
+        // --- CUBE (Icosahedron for rounded cube look) ---
+        const cubeGeo = new THREE.IcosahedronGeometry(2.6, 0);
+        const cubeMat = new THREE.MeshBasicMaterial({
+          color: 0x4c1d95,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.25
+        });
+        const cube = new THREE.Mesh(cubeGeo, cubeMat);
+        cube.position.x = 3.2;
+        group.add(cube);
+
+        group.add(new THREE.PointLight(0x1d4ed8, 0.5, 15));
+        group.add(new THREE.PointLight(0x4c1d95, 0.5, 15));
+
+        // Morph targets for shape transformation
+        const morphTarget = new THREE.IcosahedronGeometry(2.2, 0);
+        sphere.add(morphTarget);
+        sphere.morphTargetInfluences = [0];
+
+        // Animation
+        let time = 0;
+        function animate() {
+          requestAnimationFrame(animate);
+          time += 0.005;
+
+          // Slow self rotation
+          sphere.rotation.x += 0.002;
+          sphere.rotation.y += 0.003;
+          cube.rotation.x += 0.0025;
+          cube.rotation.y -= 0.002;
+
+          // Smooth morph between shapes
+          const t = (Math.sin(time) + 1) / 2; // 0 to 1
+          sphere.morphTargetInfluences[0] = THREE.MathUtils.lerp(t, sphere.morphTargetInfluences[0], 0.03);
+
+          // Scale pulses
+          sphere.scale.setScalar(1 + Math.sin(time * 1.5) * 0.1);
+          cube.scale.setScalar(1 + Math.cos(time * 1.3) * 0.1);
+
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        });
+      })();
+      </script>
+      <script>
+      // Create floating particles
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        document.querySelector('.bg-animation').appendChild(particle);
+      }
+    </script>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <div class="back-wrapper">
+        <a href="index.html" class="back-btn" aria-label="بازگشت به صفحه اصلی" title="بازگشت به صفحه اصلی">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span class="back-text">بازگشت به صفحه اصلی</span>
+        </a>
+      </div>
+      <div class="logo">Spawn<span>School</span></div>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+      <nav>
+        <ul id="nav-menu">
+          <li><a href="#course">دوره</a></li>
+          <li><a href="#instructor">استاد</a></li>
+          <li><a href="#curriculum">سرفصل‌ها</a></li>
+          <li><a href="index.html#contact" class="cta-button">ثبت‌نام</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🚀 آموزشگاه Spawn School</div>
+      <h1>مدلسازی سه‌بعدی با <span>بلندر</span> رو از صفر تا حرفه‌ای یاد بگیر!</h1>
+      <p>
+        از اسکچ تا تکسچر، از ریگ‌بندی تا رندر — با بلندر هر چیزی که توی ذهنته رو خلق کن.
+        رایگان، قدرتمند و آماده بازار کار!
+      </p>
+      <div class="hero-buttons">
+        <a href="#course" class="btn btn-primary">📐 مشاهده دوره</a>
+        <a href="#curriculum" class="btn btn-secondary">📚 سرفصل‌ها</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">+۶۰</div>
+          <div class="stat-label">درس و پروژه</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۱۴</div>
+          <div class="stat-label">ماژول کامل</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۴+</div>
+          <div class="stat-label">پروژه نهایی</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۱۰۰٪</div>
+          <div class="stat-label">عملی</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Course Introduction Section -->
+  <section id="course">
+    <div class="section-header">
+      <div class="section-label">دوره جامع</div>
+      <h2 class="section-title">آموزش کامل مدلسازی سه‌بعدی با بلندر</h2>
+      <p class="section-subtitle">
+        از صفر مطلق تا ساخت پورتفولیو حرفه‌ای — یاد بگیر چطور دنیاهای سه‌بعدی خیره‌کننده بسازی
+      </p>
+    </div>
+
+    <div class="course-card">
+      <div class="course-image">
+        <div class="course-image-overlay"></div>
+      </div>
+      <div class="course-content">
+        <div class="course-meta">
+          <div class="meta-item">
+            <span>⏱</span> مدت دوره: <strong>۲ ماه</strong>
+          </div>
+          <div class="meta-item">
+            <span>📹</span> تعداد جلسات: <strong>۱۶ ساعت</strong>
+          </div>
+          <div class="meta-item">
+            <span>🏆</span> سطح: <strong>مقدماتی تا حرفه‌ای</strong>
+          </div>
+        </div>
+
+        <p class="course-description">
+          توی این دوره با قدرتمندترین نرم‌افزار مدلسازی سه‌بعدی دنیا، یعنی <strong>Blender</strong>،
+          به‌صورت کامل آشنا می‌شی. چه بخوای کاراکتر بسازی، چه اشیاء و محیط‌های سه‌بعدی، چه انیمیشن و
+          رندرهای سینمایی — بلندر همه‌چی داره و این دوره همه‌چیز رو پوشش میده.
+        </p>
+        <p class="course-description">
+          با روش تدریس پروژه‌محور ما، همزمان با یادگیری تکنیک‌ها، ۴ تا پروژه کامل رو از ایده تا خروجی نهایی
+          پیش می‌بری. بلندر کاملاً رایگانه — پس دیگه نیازی به هزینه‌های سنگین نرم‌افزاری نداری!
+        </p>
+
+        <div class="course-highlights">
+          <div class="highlight-item">
+            <span class="highlight-icon">🎨</span>
+            <span class="highlight-text">مدلسازی نرم و سخت</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🖌️</span>
+            <span class="highlight-text">تکسچر و شیدینگ</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">🧵</span>
+            <span class="highlight-text">ریگ‌بندی و انیمیشن</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-icon">💡</span>
+            <span class="highlight-text">نورپردازی و رندر</span>
+          </div>
+        </div>
+
+        <div class="course-price-row">
+          <div class="price-tag">
+            <span class="current-price">۱۸,۰۰۰,۰۰۰ تومان</span>
+            <span class="old-price">۲۰,۰۰۰,۰۰۰ تومان</span>
+          </div>
+          <a href="index.html#contact" class="btn btn-primary">همین حالا ثبت‌نام کن</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Instructor Section   ۰  ۱  ۲  ۳  ۴  ۵  ۶  ۷  ۸  ۹  -->
+  <section id="instructor">
+    <div class="section-header">
+      <div class="section-label">استاد دوره</div>
+      <h2 class="section-title">با مربی دوره آشنا بشید</h2>
+    </div>
+
+    <div class="instructor-card">
+      <div class="instructor-avatar">👨‍🏫</div>
+      <div class="instructor-info">
+        <h3>فرحناز بزرگی</h3>
+        <div class="instructor-title">مدرس دوره مدلسازی سه‌بعدی با بلندر</div>
+        <p class="instructor-bio">
+          دانش‌آموخته رشته معماری و هنرمند سه بعدی با بیش از ۱۰ سال سابقه حرفه‌ای در زمینه مدل‌سازی سه‌بعدی و بیش از ۶ سال تجربه تخصصی در حوزه تولید دارایی‌های سه‌بعدی برای صنعت بازی‌سازی.
+
+          در کارنامه حرفه‌ای خود، دو سال همکاری با شرکت سوئدی Neoki و یک سال همکاری با استودیوی بازی‌سازی هلندی Lucky Kat Game Studio را دارد و در این مدت در زمینه طراحی و تولید مدل‌های سه‌بعدی، ساخت دارایی‌های بهینه و Game Ready و تکسچرینگ تجربه کسب کرده است.
+
+          از مهارت‌های تخصصی او می‌توان به مدل‌سازی محیط و آبجکت‌های سه‌بعدی، طراحی و اجرای تکسچر و متریال و آماده‌سازی مدل‌ها برای استفاده در بازی‌های ویدئویی اشاره کرد.
+
+          مسلط به نرم‌افزارهای Blender، 3ds Max، Rhino، Substance Painter و Photoshop.
+        </p>
+        <div class="instructor-stats">
+          <div class="inst-stat">
+            <div class="inst-stat-value">۵+</div>
+            <div class="inst-stat-label">سال سابقه</div>
+          </div>
+          <div class="inst-stat">
+            <div class="inst-stat-value">۴</div>
+            <div class="inst-stat-label">پروژه منتشرشده</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curriculum Section -->
+  <section id="curriculum">
+    <div class="section-header">
+      <div class="section-label">مسیر یادگیری</div>
+      <h2 class="section-title">سرفصل‌های دوره</h2>
+      <p class="section-subtitle">
+        ۳ فصل و ۱۶ جلسه، از مقدماتی تا حرفه‌ای — روی هر فصل کلیک کن تا جلسه‌ها و خروجی عملی‌شون رو ببینی
+      </p>
+    </div>
+
+    <div class="curriculum-container">
+      <!-- فصل اول -->
+      <div class="module-item active">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۱</div>
+            <div class="module-title">فصل اول: آشنایی و مبانی</div>
+            <div class="module-lessons">(جلسات ۱–۴)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱</div>
+            <span>آشنایی با محیط Blender</span>
+            <span class="lesson-duration">خروجی: آشنایی با پنجره‌ها، Navigation و Shortcuts</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۲</div>
+            <span>مبانی فضای سه‌بعدی</span>
+            <span class="lesson-duration">خروجی: ساخت اشکال پایه و درک مختصات XYZ</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۳</div>
+            <span>ابزارها و تکنیک‌های اصلی مدل‌سازی</span>
+            <span class="lesson-duration">خروجی: مدل‌سازی ساده با Edit Mode</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۴</div>
+            <span>کار با Modifierهای کاربردی</span>
+            <span class="lesson-duration">خروجی: استفاده از Mirror، Subdivision و Bevel</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- فصل دوم -->
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۲</div>
+            <div class="module-title">فصل دوم: مدل‌سازی تخصصی</div>
+            <div class="module-lessons">(جلسات ۵–۹)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۵</div>
+            <span>مدل‌سازی بر اساس تصاویر مرجع (Reference)</span>
+            <span class="lesson-duration">خروجی: ترسیم کان‌پاس و مدل‌سازی دقیق از روی عکس</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۶</div>
+            <span>اصول توپولوژی و مش تمیز</span>
+            <span class="lesson-duration">خروجی: بازسازی توپولوژی صحیح و خوانا</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۷</div>
+            <span>مدل‌سازی Hard Surface</span>
+            <span class="lesson-duration">خروجی: ساخت آبجکت‌های صلب و مکانیکی</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۸</div>
+            <span>سبک‌های Low Poly و Stylized</span>
+            <span class="lesson-duration">خروجی: ایجاد مدل کارتونی و کم‌تعداد مثلث</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۹</div>
+            <span>بهینه‌سازی و سازمان‌دهی مدل</span>
+            <span class="lesson-duration">خروجی: نرمال‌سازی، Groupها و Scene تمیز</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- فصل سوم -->
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="module-number">۳</div>
+            <div class="module-title">فصل سوم: رندر و پروژه نهایی</div>
+            <div class="module-lessons">(جلسات ۱۰–۱۶)</div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-lessons-list">
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۰</div>
+            <span>مبانی متریال</span>
+            <span class="lesson-duration">خروجی: ساخت متریال پایه با Principled BSDF</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۱</div>
+            <span>UV Mapping</span>
+            <span class="lesson-duration">خروجی: باز کردن UV و چیدمان صحیح</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۲</div>
+            <span>نورپردازی صحنه</span>
+            <span class="lesson-duration">خروجی: چیدمان نورهای سه‌نقطه‌ای و محیطی</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۳</div>
+            <span>خروجی نهایی و رندر</span>
+            <span class="lesson-duration">خروجی: تنظیم دوربین و خروجی تصویر/ویدیو</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۴</div>
+            <span>پروژه عملی: پیش‌تولید</span>
+            <span class="lesson-duration">خروجی: تعیین کانسپت و جمع‌آوری مراجع</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۵</div>
+            <span>پروژه عملی: ساخت مدل</span>
+            <span class="lesson-duration">خروجی: مدل‌سازی کامل آبجکت پروژه</span>
+          </a>
+          <a href="#" class="lesson-item">
+            <div class="play-icon">۱۶</div>
+            <span>پروژه عملی: تکمیل و ارائه</span>
+            <span class="lesson-duration">خروجی: متریال، نور، رندر و ارائه نهایی</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section id="contact">
+    <div class="cta-section">
+      <div class="cta-content">
+        <h2>آماده خلق دنیاهای سه‌بعدی؟ 🎨</h2>
+        <p>
+          همین حالا ثبت‌نام کن و اولین گام‌هات رو برای تبدیل شدن به یک مدلساز حرفه‌ای بردار.
+          ظرفیت دوره محدود است!
+        </p>
+        <a href="index.html#contact" class="btn btn-primary" style="font-size: 1.25rem; padding: 1.25rem 2.5rem;">
+          📐 ثبت‌نام در دوره — ۱۸,۰۰۰,۰۰۰ تومان
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">Spawn<span>School</span></div>
+    <p class="footer-text">
+      © ۱۴۰۵ تمام حقوق برای آموزشگاه Spawn School محفوظ است.
+    </p>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    function toggleMenu() {
+      document.getElementById('nav-menu').classList.toggle('active');
+    }
+
+    // Module accordion toggle
+    function toggleModule(header) {
+      const module = header.parentElement;
+      const isActive = module.classList.contains('active');
+      
+      // Close all modules
+      document.querySelectorAll('.module-item').forEach(m => {
+        m.classList.remove('active');
+      });
+      
+      // Open clicked module if it wasn't active
+      if (!isActive) {
+        module.classList.add('active');
+      }
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+        // Close mobile menu after click
+        document.getElementById('nav-menu').classList.remove('active');
+      });
+    });
+
+    // Close mobile menu on window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        document.getElementById('nav-menu').classList.remove('active');
+      }
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 100) {
+        header.style.background = 'rgba(13, 14, 20, 0.95)';
+      } else {
+        header.style.background = 'var(--glass)';
+      }
+    });
+  </script>
+</body>
+</html>

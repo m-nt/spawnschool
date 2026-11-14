@@ -1,0 +1,20 @@
+services:
+  website:
+    build: .
+    container_name: static-website
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+      - ./html:/usr/share/nginx/html
+
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
