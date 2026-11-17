@@ -385,6 +385,34 @@
   .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1;transform:none}
 
+
+  /* ---------- cinematic image stories ---------- */
+  .story-section{padding:76px 0 88px;overflow:hidden}
+  .story-section.story-alt{background:linear-gradient(180deg,transparent,rgba(139,92,246,.075),transparent)}
+  .story-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:54px;align-items:center}
+  .story-grid.reverse{grid-template-columns:.88fr 1.12fr}
+  .story-grid.reverse .story-frame{order:2}
+  .story-copy{position:relative;z-index:2}
+  .story-copy h2{margin:4px 0 16px}
+  .story-copy p{color:var(--muted);font-size:1rem;max-width:48ch}
+  .story-kicker{display:inline-flex;align-items:center;gap:9px;color:var(--cyan);font-size:.72rem;font-weight:800;letter-spacing:2px;direction:ltr;margin-bottom:12px}
+  .story-kicker::before{content:"";width:22px;height:2px;background:var(--magenta);box-shadow:0 0 12px var(--magenta)}
+  .story-frame{--parallax:0px;position:relative;padding:10px;border-radius:30px;isolation:isolate;transform:translateY(var(--parallax));transition:transform .18s linear;}
+  .story-frame::before{content:"";position:absolute;inset:0;border-radius:30px;padding:1px;background:linear-gradient(135deg,var(--cyan),rgba(139,92,246,.22) 42%,var(--magenta));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:2}
+  .story-frame::after{content:"";position:absolute;inset:14px;border:1px solid rgba(255,255,255,.12);border-radius:22px;pointer-events:none;z-index:1}
+  .story-frame img{display:block;width:100%;aspect-ratio:1.12/1;object-fit:cover;border-radius:22px;box-shadow:0 28px 70px -34px rgba(0,0,0,.95);transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .8s;filter:saturate(.92)}
+  .story-frame:hover img{transform:scale(1.025);filter:saturate(1.12)}
+  .story-frame .frame-glow{position:absolute;inset:18% -7% -8% 18%;background:rgba(139,92,246,.25);filter:blur(48px);z-index:-1;pointer-events:none}
+  .story-frame .frame-index{position:absolute;bottom:24px;right:24px;z-index:3;padding:7px 13px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(8,8,15,.72);backdrop-filter:blur(12px);font-size:.7rem;letter-spacing:1.5px;color:#fff;direction:ltr}
+  .story-frame .corner{position:absolute;width:30px;height:30px;border-color:var(--cyan);border-style:solid;z-index:3;filter:drop-shadow(0 0 6px var(--cyan));pointer-events:none}
+  .story-frame .corner.tl{top:2px;left:2px;border-width:2px 0 0 2px;border-radius:12px 0 0}
+  .story-frame .corner.br{bottom:2px;right:2px;border-width:0 2px 2px 0;border-radius:0 0 12px}
+  .story-section .story-frame.reveal{transform:translateY(34px) scale(.97)}
+  .story-section .story-frame.reveal.in{transform:translateY(var(--parallax)) scale(1)}
+  @media(max-width:900px){.story-grid,.story-grid.reverse{grid-template-columns:1fr;gap:28px}.story-grid.reverse .story-frame{order:0}.story-frame{max-width:680px;margin-inline:auto}.story-copy{max-width:680px;margin-inline:auto}}
+  @media(max-width:760px){.story-section{padding:52px 0 62px}.story-frame{padding:7px;border-radius:22px}.story-frame img{aspect-ratio:1/1;border-radius:16px}.story-frame::after{inset:10px;border-radius:16px}.story-copy p{font-size:.92rem}}
+  @media(prefers-reduced-motion:reduce){.story-frame,.story-frame img{transition:none!important}}
+
   /* ---------- responsive ---------- */
   @media (max-width:1024px){
     .hero-grid{grid-template-columns:1fr;gap:38px}
@@ -656,6 +684,22 @@
   </div>
 </section>
 
+<!-- ================= IMMERSIVE STORY 01 ================= -->
+<section class="story-section" aria-label="سفر به دنیای بازی‌سازی">
+  <div class="wrap story-grid">
+    <div class="story-frame reveal" data-parallax="0.022">
+      <span class="frame-glow"></span><span class="corner tl"></span><span class="corner br"></span>
+      <img src="spawn-assets/space-explorer.webp" alt="هنرجویی با هدست واقعیت مجازی در میان سیاره‌ها و فضا" loading="lazy" decoding="async">
+      <!--<span class="frame-index">01 / EXPLORE</span>-->
+    </div>
+    <div class="story-copy reveal">
+      <span class="story-kicker">BEYOND THE SCREEN</span>
+      <h2>از بازی کردن تا <span class="grad">خلق دنیاهای تازه</span></h2>
+      <p>اینجا فقط تماشاگر جهان‌های دیجیتال نیستی؛ یاد می‌گیری خودت آن‌ها را طراحی کنی، بسازی و به تجربه‌ای واقعی برای دیگران تبدیل‌شان کنی.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ================= ABOUT ================= -->
 <section id="about" class="about">
   <div class="wrap">
@@ -697,6 +741,23 @@
           <a class="btn btn-ghost" href="#courses">دیدن دوره‌ها</a>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= IMMERSIVE STORY 02 ================= -->
+<section class="story-section story-alt" aria-label="دروازه ورود به جهان بازی‌سازی">
+  <div class="wrap story-grid reverse">
+    <div class="story-frame reveal" data-parallax="0.018">
+      <span class="frame-glow"></span><span class="corner tl"></span><span class="corner br"></span>
+      <img src="spawn-assets/portal-world.webp" alt="ورودی نورانی به جهانی فضایی با نمادهای بازی و کنترلر" loading="lazy" decoding="async">
+      <!--<span class="frame-index">02 / CREATE</span> -->
+    </div>
+    <div class="story-copy reveal">
+      <span class="story-kicker">ENTER YOUR NEXT LEVEL</span>
+      <h2>ارتقاء <span class="grad">مرحله به مرحله</span> توانمندی‌ها</h2>
+      <p>هر مهارت، یک در تازه به روی تو باز می‌کند؛ از برنامه‌نویسی و طراحی سه‌بعدی تا ساخت تجربه‌هایی که تا امروز فقط در تصورت وجود داشتند.</p>
+      <div class="hero-actions"><a class="btn btn-ghost" href="#courses">مسیرت رو انتخاب کن <span aria-hidden="true">←</span></a></div>
     </div>
   </div>
 </section>
@@ -834,6 +895,27 @@
     el.style.transitionDelay = (i % 4) * 70 + 'ms';
     io.observe(el);
   });
+
+  /* ---------- subtle scroll parallax for framed artwork ---------- */
+  const storyFrames = document.querySelectorAll('.story-frame[data-parallax]');
+  let parallaxTicking = false;
+  const updateStoryParallax = () => {
+    const vh = window.innerHeight || 1;
+    storyFrames.forEach(frame => {
+      const rect = frame.getBoundingClientRect();
+      const strength = Number(frame.dataset.parallax || 0.02);
+      const offset = (rect.top + rect.height / 2 - vh / 2) * -strength;
+      frame.style.setProperty('--parallax', `${Math.max(-24, Math.min(24, offset))}px`);
+    });
+    parallaxTicking = false;
+  };
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    updateStoryParallax();
+    window.addEventListener('scroll', () => {
+      if (!parallaxTicking) { requestAnimationFrame(updateStoryParallax); parallaxTicking = true; }
+    }, { passive: true });
+    window.addEventListener('resize', updateStoryParallax, { passive: true });
+  }
 
   /* ---------- persian numbers ---------- */
   const fa = n => Number(n).toLocaleString('fa-IR');
