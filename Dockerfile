@@ -5,7 +5,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# test
 COPY certs/ /etc/nginx/certs/
 
 # Copy static website
