@@ -6,6 +6,8 @@ RUN rm /etc/nginx/conf.d/default.conf
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+COPY certs/ /etc/nginx/certs/
+
 # Copy static website
 COPY html/ /usr/share/nginx/html/
 
